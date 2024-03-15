@@ -1,0 +1,39 @@
+<div class ="form-group">
+
+  <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+  <input type="text" class="form-control" id="tag" [(ngModel)]="tag" placeholder="enter tags separated by comma">
+
+  <label>Sort By:</label>
+  <select class="form-control" id="sortBy" [(ngModel)]="sortBy">
+    <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+  </select>
+  
+  <div>
+    <input type="checkbox" id="ascending" [(ngModel)]="direction">
+    <label for="ascending">Ascending Order</label>
+  </div>
+  
+  <button (click)="refreshPosts()">Refresh Posts</button>
+  
+  <p>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Author ID</th>
+      <th>Author</th>
+      <th>Reads</th>
+      <th>Likes</th>
+      <th>Popularity</th>
+      <th>Tags</th>
+    </tr>
+    <tr *ngFor="let post of posts">
+      <td>{{ post.id }}</td>
+      <td>{{ post.authorId }}</td>
+      <td>{{ post.author }}</td>
+      <td>{{ post.reads }}</td>
+      <td>{{ post.likes }}</td>
+      <td>{{ post.popularity }}</td>
+      <td>{{ post.tags }}</td>
+    </tr>
+  </table>
