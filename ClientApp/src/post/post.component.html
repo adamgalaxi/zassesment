@@ -1,21 +1,31 @@
 <div class ="form-group">
 
-  <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="alert alert-danger mb-2" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <div class="container">
+    <div class="row">
+      <div class="col-6 mb-2">
+        <input type="text" class="form-control" id="tag" [(ngModel)]="tag" placeholder="enter tags separated by comma" (keydown.enter)="refreshPosts()">
+      </div>
+    </div>
+    <div class="row">
+      <div class = col-1>
+        <label>Sort By:</label>
+      </div>
 
-  <input type="text" class="form-control" id="tag" [(ngModel)]="tag" placeholder="enter tags separated by comma">
+      <div class="col-3">
+        <select class="form-control" id="sortBy" [(ngModel)]="sortBy">
+          <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
+        </select>
+      </div>
 
-  <label>Sort By:</label>
-  <select class="form-control" id="sortBy" [(ngModel)]="sortBy">
-    <option *ngFor="let option of sortOptions" [value]="option">{{ option }}</option>
-  </select>
-  
-  <div>
-    <input type="checkbox" id="ascending" [(ngModel)]="direction">
-    <label for="ascending">Ascending Order</label>
-  </div>
-  
-  <button (click)="refreshPosts()">Refresh Posts</button>
-  
+      <div class="col-2">
+        <input type="checkbox" class="" id="ascending" [(ngModel)]="direction">
+        <label for="ascending">Ascending Order</label>
+      </div>
+    </div>
+  <button class="btn btn-primary btn-lg mt-3" (click)="refreshPosts()">Refresh Posts</button>
+</div>
+
   <p>
   <table>
     <tr>

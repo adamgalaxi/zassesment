@@ -1,5 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-post',
@@ -22,24 +24,47 @@ export class PostComponent implements OnInit {
 
   ngOnInit(): void {
     let params = `posts?tag=tech,science,culture,politics,health,startups`;
-    this.http.get<Post[]>(this.baseUrlFix + params).subscribe(posts => {
+    this.http.get<Post[]>(this.baseUrlFix + params)
+    .pipe(catchError(err => this.handleError(err)))
+    .subscribe(posts => {
        this.posts = posts;
-    }, error => this.errorMessage = "Invalid Parameters: " + error.message);
+    });
   }
 
-  //TODO: Error handling display body of message from backend containing error message 
   getPosts(): void {
     let params = `posts?tag=${this.tag}&sortBy=${this.sortBy}&direction=${this.direction ? 'asc' : 'desc'}`;
-    this.http.get<Post[]>(this.baseUrlFix + params).subscribe(posts => {
+    this.http.get<Post[]>(this.baseUrlFix + params)
+    .pipe(catchError(err => this.handleError(err)))
+    .subscribe(posts => {
       this.posts = posts;
       
-    }, error => this.errorMessage = "Invalid Parameters: " + error.message);
+    });
   }
 
   refreshPosts(): void {
     this.errorMessage = "";
     this.getPosts();
   }
+
+  private handleError(error: HttpError): Observable<any>{
+
+    this.errorMessage += error.error.title + " ";
+
+    let validationErrors = error.error.errors;
+
+    if(validationErrors.tag != null && validationErrors.tag.length > 0)
+      this.errorMessage += validationErrors.tag[0];
+    else if(validationErrors.validation != null && validationErrors.validation.length > 0)
+      {
+        validationErrors.validation.forEach(error => {
+          this.errorMessage += error;
+        });  
+      }
+
+  
+    return throwError(error);
+  }
+
 }
 
 interface Post {
@@ -50,4 +75,16 @@ interface Post {
   popularity: number;
   reads: number;
   tags: string[];
+}
+
+interface HttpError {
+  error: DotNetError;
+}
+
+interface DotNetError {
+  type: string;
+  title: string;
+  status: number;
+  traceId: string;
+  errors: {tag: string[], validation: string[]};
 }

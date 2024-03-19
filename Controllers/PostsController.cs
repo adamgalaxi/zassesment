@@ -32,13 +32,13 @@ namespace zum.Controllers
             var parsedTags = ParsedTags(tags);
 
             if (parsedTags.Length == 0)
-                return BadRequest("tags parameter is required");
+                return BadRequest(ErrorResponse("Tag parameter is required"));
 
             if (!ValidateSortBy(sortBy))
-                return BadRequest("sortBy parameter is invalid");
+                return BadRequest(ErrorResponse("sortBy parameter is invalid"));
 
             if (!ValidateDirection(direction))
-                return BadRequest("direction parameter is invalid");
+                return BadRequest(ErrorResponse("direction parameter is invalid"));
 
             try
             {
@@ -117,5 +117,20 @@ namespace zum.Controllers
             }
             return orderBySelector;
         }
+
+        private object ErrorResponse(string errorMessage)
+        { 
+            if (errorMessage == null || errorMessage.Length == 0)
+                return null;
+            return new
+            {
+                type = "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+                title = "One or more validation errors occurred.",
+                status = 400,
+                traceID = Guid.NewGuid(),
+                Errors = new { validation = errorMessage },
+            };
+        }
+
     }
 }
